@@ -1,0 +1,15 @@
+read_verilog transmisor.v
+hierarchy -check -top transmisor
+proc;
+opt;
+fsm;
+opt;
+memory;
+opt;
+techmap;
+opt;
+write_verilog rtlil.v
+dfflibmap -liberty ../libs/cmos_cells.lib;
+abc -liberty ../libs/cmos_cells.lib;
+clean
+write_verilog transmisor_sintetizado.v
