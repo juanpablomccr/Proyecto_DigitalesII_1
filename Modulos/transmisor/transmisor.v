@@ -1,8 +1,9 @@
 `timescale 1ns/1ps
-`ifndef estest
-	`include "Modulos/mux/mux.v"
-	`include "Modulos/byte_striping/byte_striping.v"
-`endif
+`define estransmisor 1
+`include "Modulos/mux/mux.v"
+`include "Modulos/byte_striping/byte_striping.v"
+
+	
 module transmisor (
 	clk,
 	rst,
@@ -41,7 +42,6 @@ output wire [7:0] tx_lane0;
 output wire [7:0] tx_lane1;
 output wire [7:0] tx_lane2;
 output wire [7:0] tx_lane3;
-
 //variables internas
 
 //conexion entre mux y byte_striping

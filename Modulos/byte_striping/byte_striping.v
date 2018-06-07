@@ -10,13 +10,13 @@ module byte_striping(
 		tx_lane1,		// arreglo de salida de canal1
 		tx_lane2,		// arreglo de salida de canal2
 		tx_lane3,		// arreglo de salida de canal3
-//		counter,		// contador para manejar salida sincronizada de canales
-//		dff_00,			//variables auxiliares
-//		dff_01,
-//		dff_02,
-//		dff_10,
-//		dff_11,
-//		dff_20,
+		counter,		// contador para manejar salida sincronizada de canales
+		dff_00,			//variables auxiliares
+		dff_01,
+		dff_02,
+		dff_10,
+		dff_11,
+		dff_20,
 );
  
 input wire clk;
@@ -31,21 +31,21 @@ output reg [7:0] tx_lane2;
 output reg [7:0] tx_lane3;
 
 //variables internas auxiliares
-reg [1:0] counter;
-reg [7:0] dff_00;
-reg [7:0] dff_01;
-reg [7:0] dff_02;
-reg [7:0] dff_10;
-reg [7:0] dff_11;
-reg [7:0] dff_20;
+output reg [1:0] counter;
+output reg [7:0] dff_00;
+output reg [7:0] dff_01;
+output reg [7:0] dff_02;
+output reg [7:0] dff_10;
+output reg [7:0] dff_11;
+output reg [7:0] dff_20;
 
-//output reg [1:0] counter;
-//output reg [7:0] dff_00;
-//output reg [7:0] dff_01;
-//output reg [7:0] dff_02;
-//output reg [7:0] dff_10;
-//output reg [7:0] dff_11;
-//output reg [7:0] dff_20;
+// reg [1:0] counter;
+// reg [7:0] dff_00;
+// reg [7:0] dff_01;
+// reg [7:0] dff_02;
+// reg [7:0] dff_10;
+// reg [7:0] dff_11;
+// reg [7:0] dff_20;
 
 //parametros
 
@@ -59,6 +59,14 @@ always@( posedge clk) begin
 		tx_lane1 <= INACTIVE;		
 		tx_lane2 <= INACTIVE;		
 		tx_lane3 <= INACTIVE;
+		dff_00 <= INACTIVE; 
+		dff_01 <= INACTIVE;
+		dff_02 <= INACTIVE;
+		dff_10 <= INACTIVE;
+		dff_11 <= INACTIVE;
+		dff_20 <= INACTIVE;
+	
+	
 		counter <= 2'b00;
 
 	end else if(!rst && enb ) begin
