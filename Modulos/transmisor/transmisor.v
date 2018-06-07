@@ -65,7 +65,7 @@ mux tx_mux(
 	.idle(idle),
 	.control_dk(control_dk),
 	.tx_multiplexada(tx_mux_out),
-	.tx_ValidS(tx_Valid)
+	.tx_Valid(tx_Valid)
 );
 
 byte_striping tx_byte_striping(

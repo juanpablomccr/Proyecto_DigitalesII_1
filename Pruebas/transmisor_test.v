@@ -88,10 +88,12 @@ parameter [7:0] FTS = 8'h3C;
 parameter [7:0] IDLE = 8'h7C;
 parameter [7:0] COM = 8'hBC; 
 //generacion de la señal de reloj
+//ciclo de 2 ns
+
 always #1 clk = ~clk;
 
 initial begin
-	$dumpfile("gtkws/testTransmisor.vcd");
+	$dumpfile("gtkws/transmisor.vcd");
 	$dumpvars;
 	$display("clk\tend\trst\ttx_DataE\tcom\tskp\tstp\tsdp\tend_ok\tedb\tfts\tidle\tcontrol_dk\ttx_lane0\ttx_lane1\ttxlane2\ttxlane3");
 	$monitor($time,"\t%b\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%b\t%h\t%h\t%h\t%h", clk, enb, rst, tx_DataE, com, skp, stp, sdp, end_ok, edb, fts, idle, control_dk, tx_lane0, tx_lane1, tx_lane2, tx_lane3);
@@ -113,103 +115,67 @@ idle <= IDLE;
 	end
 
 
-#4
-control_dk <= 4'b1000;  //ILDE
-#2
+#15
+repeat (4)  begin
+	@(posedge clk);
 control_dk <= 4'b1000;  //IDLE
-#2
-control_dk <= 4'b1000;	//IDLE
-#2
-control_dk <= 4'b1000; //IDLE  
-#2
+end
+
+repeat (4)  begin
+	@(posedge clk);
 control_dk <= 4'b0001;  //COM
-#2
-control_dk <= 4'b0001;  //COM
-#2
-control_dk <= 4'b0001;  //COM
-#2
-control_dk <= 4'b0001;  //COM
-#2
+
+end
+
+@(posedge clk); 
 control_dk <= 4'b0011;  //STP
-#2
+
+repeat (2)  begin
+	@(posedge clk);
 control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
+end
+
+@(posedge clk); 
 control_dk <= 4'b0101;  //END
-#2
+
+repeat (4)  begin
+	@(posedge clk);
 control_dk <= 4'b0001;  //COM
-#2
-control_dk <= 4'b0001;  //COM
-#2
-control_dk <= 4'b0001;  //COM
-#2
-control_dk <= 4'b0001;  //COM
-#2
+
+end
+
+repeat (12) begin
+	@(posedge clk);
 control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
-control_dk <= 4'b0010;  //SKP
-#2
+end
+
+@(posedge clk); 
 control_dk <= 4'b0011;  //STP
-#2
+
+repeat (10)  begin
+	@(posedge clk);
 control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
+end
+
+@(posedge clk);
 control_dk <= 4'b0101;  //END
-#2
+
+@(posedge clk);
 control_dk <= 4'b0100;  //SDP
-#2
+
+repeat (2)  begin
+	@(posedge clk);
 control_dk <= 4'b0000;  //Data
-#2
-control_dk <= 4'b0000;  //Data
-#2
+end
+
+@(posedge clk);
 control_dk <= 4'b0101;  //END
-#2
+
+repeat (4)  begin
+	@(posedge clk);
 control_dk <= 4'b1000;  //IDLE
-#2
-control_dk <= 4'b1000;  //IDLE
-#2
-control_dk <= 4'b1000;  //IDLE
-#2
-control_dk <= 4'b1000;  //IDLE
-#2
+end
+
 $finish;
 
 end
