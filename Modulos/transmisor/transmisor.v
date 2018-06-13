@@ -1,4 +1,3 @@
-`timescale 1ns/1ps
 `define estransmisor 1
 `include "Modulos/mux/mux.v"
 `include "Modulos/byte_striping/byte_striping.v"
