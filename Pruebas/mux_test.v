@@ -1,18 +1,12 @@
 `timescale 1ns/1ps
 `include "Modulos/libs/cmos_cells.v"
-`include "Modulos/transmisor/transmisor.v"
-`include "Sintesis/"
-`ifndef estransmisor
 `include "Modulos/mux/mux.v"
-`include "Modulos/byte_striping/byte_striping.v"
-`endif
-
 
 module transmisor_tester(
 	clk,
 	rst,
 	enb,
-	tx_Data,
+	tx_DataE,
 	com,		
 	skp,		
 	stp,		
@@ -22,10 +16,8 @@ module transmisor_tester(
 	fts, 		
 	idle,		
 	control_dk,
-	tx_lane0,       
-	tx_lane1,               
-	tx_lane2,               
-	tx_lane3,               
+	tx_Valid,               
+	tx_multiplexada,               
 
 );
 
@@ -35,7 +27,7 @@ module transmisor_tester(
 output  reg clk;
 output  reg  enb;
 output  reg  rst;
-output  reg  [7:0] tx_Data;
+output  reg  [7:0] tx_DataE;
 output  reg  [7:0] com;
 output  reg  [7:0] skp;
 output  reg  [7:0] stp;
@@ -45,23 +37,19 @@ output  reg  [7:0] edb;
 output  reg  [7:0] fts;
 output  reg  [7:0] idle;
 output  reg  [3:0] control_dk;
-
-input wire [7:0] tx_lane0;
-input wire [7:0] tx_lane1;
-input wire [7:0] tx_lane2;
-input wire [7:0] tx_lane3;
+input  wire [7:0] tx_multiplexada;
+input  wire tx_Valid;
       
 //variables internas
        
 //conexinpution entre mux y byte_striping
 wire [7:0] tx_mux_out;
-wire tx_Valid;
 
-transmisor transmisor_tester(
+mux mux_tester(
 		.clk(clk),
 		.rst(rst),
 		.enb(enb),
-		.tx_Data(tx_Data),
+		.tx_DataE(tx_DataE),
 		.com(com),
 		.skp(skp),
 		.stp(stp),
@@ -71,10 +59,8 @@ transmisor transmisor_tester(
 		.fts(fts),
                 .idle(idle),	   
               .control_dk(control_dk),
-                .tx_lane0(tx_lane0),  
-                .tx_lane1(tx_lane1),  
-                .tx_lane2(tx_lane2),  
-                .tx_lane3(tx_lane3)
+                .tx_multiplexada(tx_multiplexada),  
+                .tx_Valid(tx_Valid)  
 );	
 		 
 		 
@@ -88,54 +74,55 @@ parameter [7:0] EDB = 8'hFE;
 parameter [7:0] FTS = 8'h3C;
 parameter [7:0] IDLE = 8'h7C;
 parameter [7:0] COM = 8'hBC; 
-parameter [3:0] OFF = 4'b1111;
-
 //generacion de la señal de reloj
 //ciclo de 2 ns
 
-always #1 clk = ~clk;
-
+always begin
+#1 clk = ~clk;
+tx_DataE = 8'hff;
+com = COM;
+skp = SKP;
+stp = STP;
+sdp = SDP;
+end_ok = END;
+edb = EDB;
+fts = FTS;
+idle = IDLE;
+end
 initial begin
-	$dumpfile("gtkws/transmisor.vcd");
+	$dumpfile("gtkws/mux123.vcd");
 	$dumpvars;
-	$display("clk\tend\trst\ttx_Data\tcom\tskp\tstp\tsdp\tend_ok\tedb\tfts\tidle\tcontrol_dk\ttx_lane0\ttx_lane1\ttxlane2\ttxlane3");
-	$monitor($time,"\t%b\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%b\t%h\t%h\t%h\t%h", clk, enb, rst, tx_Data, com, skp, stp, sdp, end_ok, edb, fts, idle, control_dk, tx_lane0, tx_lane1, tx_lane2, tx_lane3);
+	$display("clk\tend\trst\ttx_DataE\tcom\tskp\tstp\tsdp\tend_ok\tedb\tfts\tidle\tcontrol_dk\ttx_multiplexada");
+	$monitor($time,"\t%b\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%b\t%h", clk, enb, rst, tx_DataE, com, skp, stp, sdp, end_ok, edb, fts, idle, control_dk, tx_multiplexada);
+
 clk <= 0;
 enb <= 0;
 rst <= 1;
-tx_Data <= 8'hff;
-com <= COM;
-skp <= SKP;
-stp <= STP;
-sdp <= SDP;
-end_ok <= END;
-edb <= EDB;
-fts <= FTS;
-idle <= IDLE;
-control_dk <= OFF;
 
 @(posedge clk) begin
 	rst <= 0;
 	enb <= 1;
-	end
+end
 
 
 #15
 //Señal  IDLE
 repeat (4)  begin
 	@(posedge clk);
-	control_dk <= 4'b1000; 
+	control_dk <= 4'd8; 
 end
+
 //COM
 repeat (4)  begin
 	@(posedge clk);
-	control_dk <= 4'b0001;
-
+	control_dk <= 4'd1;
 end
 
 //STP
+repeat (1)  begin
 	@(posedge clk); 
-	control_dk <= 'b0011; 
+	control_dk <= 'd3; 
+end 
 
 //Data
 repeat (2)  begin
@@ -144,14 +131,15 @@ repeat (2)  begin
 end
 
 //END
+repeat (1)  begin
 	@(posedge clk); 
-	control_dk <= 4'b0101;
+	control_dk <= 4'b0000;
+end
 
 //COM
 repeat (4)  begin
 	@(posedge clk);
 	control_dk <= 4'b0001;
-
 end
 
 //SKP
@@ -185,13 +173,14 @@ repeat (2)  begin
 	@(posedge clk);
 	control_dk <= 4'b0000;
 end
+
 //END
 @(posedge clk);
 control_dk <= 4'b0101;
 
 
 //IDLE
-repeat (12)  begin
+repeat (4)  begin
 	@(posedge clk);
 	control_dk <= 4'b1000; 
 end

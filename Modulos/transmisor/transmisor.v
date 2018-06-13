@@ -8,7 +8,7 @@ module transmisor (
 	clk,
 	rst,
 	enb,
-	tx_DataE,		//arreglo de datos de entrada desde data layer
+	tx_Data,		//arreglo de datos de entrada desde data layer
 	com,			//señal de control COM
 	skp,			//señal de control SKP
 	stp,			//señal de control STP
@@ -27,7 +27,7 @@ module transmisor (
 input wire clk;
 input wire enb;
 input wire rst;
-input wire [7:0] tx_DataE;
+input wire [7:0] tx_Data;
 input wire [7:0] com;
 input wire [7:0] skp;
 input wire [7:0] stp;
@@ -37,7 +37,6 @@ input wire [7:0] edb;
 input wire [7:0] fts;
 input wire [7:0] idle;
 input wire [3:0] control_dk;
-
 output wire [7:0] tx_lane0;
 output wire [7:0] tx_lane1;
 output wire [7:0] tx_lane2;
@@ -54,7 +53,7 @@ mux tx_mux(
 	.clk(clk),
 	.enb(enb),
 	.rst(rst),
-	.tx_DataE(tx_DataE),
+	.tx_Data(tx_Data),
 	.com(com),
 	.skp(skp),
 	.stp(stp),
@@ -72,8 +71,8 @@ byte_striping tx_byte_striping(
 	.clk(clk),
 	.enb(enb),
 	.rst(rst),
-	.tx_DataE(tx_mux_out),
-	.tx_ValidE(tx_Valid),
+	.tx_Data(tx_mux_out),
+	.tx_Valid(tx_Valid),
 	.tx_lane0(tx_lane0),
 	.tx_lane1(tx_lane1),
 	.tx_lane2(tx_lane2),

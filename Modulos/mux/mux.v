@@ -2,7 +2,7 @@ module mux(
 	clk,			//reloj
 	rst,			//reset
 	enb,			//enable
-	tx_DataE,		//arreglo de datos de entrada desde data layer
+	tx_Data,		//arreglo de datos de entrada desde data layer
 	com,			//señal de control COM
 	skp,			//señal de control SKP
 	stp,			//señal de control STP
@@ -19,7 +19,7 @@ module mux(
 input wire clk;
 input wire rst;
 input wire enb;
-input wire [7:0] tx_DataE;
+input wire [7:0] tx_Data;
 input wire [7:0] com;
 input wire [7:0] skp;
 input wire [7:0] stp;
@@ -35,51 +35,61 @@ output reg tx_Valid;
 
 parameter [7:0] INACTIVE = 8'b0;
 
+
+initial begin
+tx_multiplexada = INACTIVE;
+tx_Valid = 1;
+end
+
 always @ (*) begin
+
+	tx_multiplexada = INACTIVE;
+	tx_Valid = 1;
+	
 	if(rst) begin
 		tx_multiplexada = INACTIVE;
 		tx_Valid = 1;
 	end else if(!rst && enb) begin
+		//Los elementos de selección se dan en decimal ya que en binario no los
+		//reconoce correctamente
+		
+		
 		case (control_dk)
-			0000: begin
+			0: begin
 			      	tx_Valid = 1;
-				tx_multiplexada = tx_DataE;
+				tx_multiplexada = tx_Data;
 			end
-			0001: begin
+			1: begin
 			       tx_Valid = 0;
 			       tx_multiplexada = com;
 			end
-			0010: begin
+			2: begin
 			       tx_Valid = 0;
 			       tx_multiplexada = skp;
 			end
-			0011: begin
+			3: begin
 			       tx_Valid = 0;
 			       tx_multiplexada = stp;
 			end
-			0100: begin
+			4: begin
 			       tx_Valid = 0;
 			       tx_multiplexada = sdp;
 			end
-			0101: begin
+			5: begin
 			       tx_Valid = 0;
 			       tx_multiplexada = end_ok;
 			end
-			0110: begin
+			6: begin
 			       tx_Valid = 0;
 			       tx_multiplexada = edb;
 			end
-			0111: begin
+			7: begin
 			       tx_Valid = 0;
 			       tx_multiplexada = fts;
 			end
-			1000: begin
+			8: begin
 			      	tx_Valid = 1;
 				tx_multiplexada = idle;
-			end
-			default: begin
-				tx_multiplexada = INACTIVE;  
-				tx_Valid = 1;
 			end
 		endcase	
 	end
