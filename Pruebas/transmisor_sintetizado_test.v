@@ -1,8 +1,8 @@
 `timescale 1ns/1ps
 `include "Modulos/libs/cmos_cells.v"
-`include "Modulos/transmisor/transmisor.v"
+`include "Sintesis/tx_sintetizado.v"
 `include "Sintesis/"
-`ifndef estransmisor
+`ifndef sintetizado
 `include "Modulos/mux/mux.v"
 `include "Modulos/byte_striping/byte_striping.v"
 `endif
@@ -88,15 +88,13 @@ parameter [7:0] EDB = 8'hFE;
 parameter [7:0] FTS = 8'h3C;
 parameter [7:0] IDLE = 8'h7C;
 parameter [7:0] COM = 8'hBC; 
-parameter [3:0] OFF = 4'b1111;
-
 //generacion de la señal de reloj
 //ciclo de 2 ns
 
 always #1 clk = ~clk;
 
 initial begin
-	$dumpfile("gtkws/transmisor.vcd");
+	$dumpfile("gtkws/tx_sintetizado.vcd");
 	$dumpvars;
 	$display("clk\tend\trst\ttx_Data\tcom\tskp\tstp\tsdp\tend_ok\tedb\tfts\tidle\tcontrol_dk\ttx_lane0\ttx_lane1\ttxlane2\ttxlane3");
 	$monitor($time,"\t%b\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%h\t%b\t%h\t%h\t%h\t%h", clk, enb, rst, tx_Data, com, skp, stp, sdp, end_ok, edb, fts, idle, control_dk, tx_lane0, tx_lane1, tx_lane2, tx_lane3);
@@ -112,8 +110,6 @@ end_ok <= END;
 edb <= EDB;
 fts <= FTS;
 idle <= IDLE;
-control_dk <= OFF;
-
 @(posedge clk) begin
 	rst <= 0;
 	enb <= 1;
