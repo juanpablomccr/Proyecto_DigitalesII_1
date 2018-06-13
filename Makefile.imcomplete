@@ -1,0 +1,12 @@
+CC = iverilog
+FLAGS = -Wall
+MOD_LIB = Modulos/
+P_LIB = Pruebas/
+
+
+transmisor: $(P_LIB)transmisor_test.v
+	$(CC) $(FLAGS) -o 
+
+
+
+
